@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({super.key, required this.id});
+
+  final int id;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
