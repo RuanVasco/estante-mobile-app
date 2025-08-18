@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'package:provider/provider.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +43,8 @@ class LoginPage extends StatelessWidget {
               // Adiciona um espaço vertical de 24 pixels
               const SizedBox(height: 24),
 
-              // Campo de texto para o Email
               TextField(
+                controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
                   hintText: 'Digite seu email',
@@ -48,8 +58,8 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 16),
 
-              // Campo de texto para a Senha
               TextField(
+                controller: _passwordController,
                 decoration: InputDecoration(
                   labelText: 'Senha',
                   hintText: 'Digite sua senha',
@@ -63,11 +73,13 @@ class LoginPage extends StatelessWidget {
 
               const SizedBox(height: 24),
 
-              // Botão de Login
               ElevatedButton(
                 onPressed: () {
-                  // A lógica de login seria adicionada aqui
-                  print('Botão de login pressionado!');
+                  final email = _emailController.text;
+                  final password = _passwordController.text;
+
+                  final authService = context.read<AuthService>();
+                  authService.login(email, password);
                 },
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(double.infinity, 50), // Faz o botão ocupar a largura total
@@ -84,5 +96,12 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
   }
 }
