@@ -5,6 +5,8 @@ import 'package:estante/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../pages/register.dart';
+
 class AppRouter {
   final AuthService authService;
 
@@ -13,12 +15,16 @@ class AppRouter {
   late final GoRouter router = GoRouter(
     refreshListenable: authService,
 
-    initialLocation: '/login',
+    initialLocation: '/home',
 
     routes: [
       GoRoute(
         path: '/login',
         builder: (context, state) => const LoginPage(),
+      ),
+      GoRoute(
+          path: '/register',
+          builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
         path: '/home',
@@ -40,20 +46,5 @@ class AppRouter {
         },
       )
     ],
-
-    redirect: (BuildContext context, GoRouterState state) {
-      final isAuthenticated = authService.isAuthenticated;
-      final isLoggingIn = state.matchedLocation == '/login';
-
-      if (!isAuthenticated && !isLoggingIn) {
-        return '/login';
-      }
-
-      if (isAuthenticated && isLoggingIn) {
-        return '/home';
-      }
-
-      return null;
-    },
   );
 }

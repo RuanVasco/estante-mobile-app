@@ -2,8 +2,11 @@ import 'package:estante/services/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'services/auth_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load(fileName: ".env");
+
   runApp(
     ChangeNotifierProvider(
       create: (context) => AuthService(),
