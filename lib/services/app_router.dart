@@ -2,7 +2,6 @@ import 'package:estante/pages/home.dart';
 import 'package:estante/pages/login.dart';
 import 'package:estante/pages/profile.dart';
 import 'package:estante/services/auth_service.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../pages/register.dart';
@@ -15,7 +14,7 @@ class AppRouter {
   late final GoRouter router = GoRouter(
     refreshListenable: authService,
 
-    initialLocation: '/home',
+    initialLocation: '/',
 
     routes: [
       GoRoute(
@@ -27,8 +26,8 @@ class AppRouter {
           builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomePage(title: 'Home'),
+        path: '/',
+        builder: (context, state) => const HomePage(),
       ),
       GoRoute(
         path: '/profile/:id',
@@ -40,8 +39,7 @@ class AppRouter {
 
           return ProfilePage(id: id);
         } catch (e) {
-          print('Error parsing profile ID: $e');
-          return const HomePage(title: 'Home');
+          return const HomePage();
           }
         },
       )

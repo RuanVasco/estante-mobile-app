@@ -15,32 +15,23 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Scaffold é um widget que implementa a estrutura básica de layout do Material Design.
-    // Ele fornece uma AppBar, um corpo (body) e outras funcionalidades como gavetas (drawers).
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login'),
-        backgroundColor: Colors.blueAccent, // Cor da barra superior
-        foregroundColor: Colors.white, // Cor do texto do título
+        backgroundColor: Colors.blueAccent,
+        foregroundColor: Colors.white,
       ),
-      // O corpo da tela
       body: Padding(
-        // Adiciona um espaçamento de 16 pixels em todas as bordas
         padding: const EdgeInsets.all(16.0),
-        // Center alinha seu filho (child) ao centro da tela
         child: Center(
-          // Column organiza seus filhos verticalmente
           child: Column(
-            // Alinha os widgets ao centro verticalmente
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Texto de boas-vindas
               const Text(
                 'Bem-vindo de volta!',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
 
-              // Adiciona um espaço vertical de 24 pixels
               const SizedBox(height: 24),
 
               TextField(
@@ -82,7 +73,7 @@ class _LoginPageState extends State<LoginPage> {
                   authService.login(email, password);
                 },
                 style: ElevatedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 50), // Faz o botão ocupar a largura total
+                  minimumSize: const Size(double.infinity, 50),
                   backgroundColor: Colors.blueAccent,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(

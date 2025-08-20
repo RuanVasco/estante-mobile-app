@@ -1,6 +1,6 @@
-import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:estante/entities/api_response.dart';
 import 'package:estante/entities/book_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -9,8 +9,7 @@ import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.title});
-  final String title;
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -29,19 +28,19 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchAds() async {
     try {
-      final decodedData = await _apiService.get('/ads');
+      final ApiResponse decodedData = await _apiService.get('/ads');
 
-      developer.log('Dados Recebidos: $decodedData', name: 'API Call');
+      developer.log('${decodedData.statusCode}');
 
-      final List<BookAd> fetchedAds = (decodedData['data'] as List)
-          .map((data) => BookAd(name: data['name']))
-          .toList();
+      // final List<BookAd> fetchedAds = (decodedData['data'] as List)
+      //     .map((data) => BookAd(name: data['name']))
+      //     .toList();
 
-      setState(() {
-        _bookAds = fetchedAds;
+      // setState(() {
+      //   _bookAds = fetchedAds;
       //   _isLoading = false;
       //   _errorMessage = null;
-      });
+      // });
 
     } catch (e) {
       developer.log('Ocorreu um erro: $e', name: 'API Call', error: e);
@@ -63,9 +62,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _addBookAd() {
-    setState(() {
-      _bookAds.add(BookAd(name: 'Novo Livro #${_bookAds.length + 1}'));
-    });
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Confirmar Ação'),
+            content: const Text('Você tem certeza que deseja executar esta ação?'),
+            actions: <Widget>[
+              TextButton(
+                child: const Text('Cancelar'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text('Confirmar'),
+                onPressed: () {
+                  print('Ação confirmada!');
+
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        }
+    );
   }
 
   @override
@@ -75,7 +96,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text("Estante"),
         actions: [
           PopupMenuButton<String>(
             onSelected: (String result) {

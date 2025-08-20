@@ -1,4 +1,8 @@
+import 'package:estante/entities/api_response.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../services/api_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -14,11 +18,66 @@ class _RegisterPageState extends State<RegisterPage> {
   final _confirmPasswordController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  final ApiService _apiService = ApiService();
+
+  Future<void> _register() async {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    final Map<String, dynamic> data = {
+      'name': _nameController.text,
+      'email': _emailController.text,
+      'password': _passwordController.text
+    };
+
+    try {
+      final ApiResponse response = await _apiService.post('/register', body: data);
+
+      if (!mounted) return;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        _handleSuccess("/login");
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erro no registro: ${e.toString()}'))
+      );
+    }
+  }
+
+  void _handleSuccess(String route) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Registro Concluído!'),
+          content: const Text('Sua conta foi criada com sucesso. Você será redirecionado para a tela de login.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                context.go(route);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go("/");
+          },
+        ),
         title: const Text('Registrar-se'),
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
@@ -39,7 +98,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
                   const SizedBox(height: 24),
 
-                  // Campo de Nome
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
@@ -105,9 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 24),
 
                   ElevatedButton(
-                    onPressed: () {
-
-                    },
+                    onPressed: _register,
                     style: ElevatedButton.styleFrom(
                       minimumSize: const Size(double.infinity, 50),
                       backgroundColor: Colors.blueAccent,

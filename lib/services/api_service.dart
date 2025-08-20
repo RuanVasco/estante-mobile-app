@@ -3,12 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../entities/api_response.dart';
+
 enum HttpMethod { get, post, put, delete, patch }
 
 class ApiService {
   final String _baseUrl = dotenv.env['API_BASE_URL']!;
 
-  Future<dynamic> _request(
+  Future<ApiResponse> _request(
       HttpMethod method,
       String endpoint, {
         Map<String, dynamic>? body,
@@ -45,15 +47,15 @@ class ApiService {
       }
 
       return _handleResponse(response);
-
     } catch (e) {
       throw Exception('Erro de conexão: $e');
     }
   }
 
-  dynamic _handleResponse(http.Response response) {
+  ApiResponse _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      return response.body.isNotEmpty ? jsonDecode(response.body) : null;
+      final decodedBody = response.body.isNotEmpty ? jsonDecode(response.body) : null;
+      return ApiResponse(statusCode: response.statusCode, body: decodedBody);
     } else {
       throw Exception(
           'Falha na requisição: ${response.statusCode}\nCorpo: ${response.body}'
@@ -61,18 +63,18 @@ class ApiService {
     }
   }
 
-  Future<dynamic> get(String endpoint) =>
+  Future<ApiResponse> get(String endpoint) =>
       _request(HttpMethod.get, endpoint);
 
-  Future<dynamic> post(String endpoint, {Map<String, dynamic>? body}) =>
+  Future<ApiResponse> post(String endpoint, {Map<String, dynamic>? body}) =>
       _request(HttpMethod.post, endpoint, body: body);
 
-  Future<dynamic> put(String endpoint, {Map<String, dynamic>? body}) =>
+  Future<ApiResponse> put(String endpoint, {Map<String, dynamic>? body}) =>
       _request(HttpMethod.put, endpoint, body: body);
 
-  Future<dynamic> delete(String endpoint) =>
+  Future<ApiResponse> delete(String endpoint) =>
       _request(HttpMethod.delete, endpoint);
 
-  Future<dynamic> patch(String endpoint, {Map<String, dynamic>? body}) =>
+  Future<ApiResponse> patch(String endpoint, {Map<String, dynamic>? body}) =>
       _request(HttpMethod.patch, endpoint, body: body);
 }
