@@ -1,0 +1,4 @@
+enum ConditionEnum {
+  NEW,
+  USED
+}

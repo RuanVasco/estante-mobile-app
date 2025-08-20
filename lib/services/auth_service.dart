@@ -1,20 +1,8 @@
-import 'package:estante/entities/api_response.dart';
+import 'package:estante/models/api_response_model.dart';
 import 'package:flutter/material.dart';
 
+import '../models/user_model.dart';
 import 'api_service.dart';
-
-class UserModel {
-  final String name;
-  final String email;
-  UserModel({required this.name, required this.email});
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-    );
-  }
-}
 
 class AuthService extends ChangeNotifier {
   final ApiService _apiService = ApiService();
@@ -34,13 +22,12 @@ class AuthService extends ChangeNotifier {
     };
 
     try {
-      final ApiResponse response = await _apiService.post("/login", body: data);
+      final ApiResponseModel response = await _apiService.post("/login", body: data);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = response.body as Map<String, dynamic>;
 
         _token = responseData['token'];
-
         _user = UserModel.fromJson(responseData['user']);
 
         notifyListeners();

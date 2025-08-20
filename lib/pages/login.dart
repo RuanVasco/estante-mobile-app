@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../services/auth_service.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,12 @@ class _LoginPageState extends State<LoginPage> {
         title: const Text('Login'),
         backgroundColor: Colors.blueAccent,
         foregroundColor: Colors.white,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            context.go("/");
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -1,4 +1,4 @@
-import 'package:estante/entities/api_response.dart';
+import 'package:estante/models/api_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
     };
 
     try {
-      final ApiResponse response = await _apiService.post('/register', body: data);
+      final ApiResponseModel response = await _apiService.post('/register', body: data);
 
       if (!mounted) return;
 

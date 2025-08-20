@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
-import 'package:estante/entities/api_response.dart';
-import 'package:estante/entities/book_ad.dart';
+import 'package:estante/models/api_response_model.dart';
+import 'package:estante/models/ad_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/api_service.dart';
@@ -16,21 +16,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<BookAd> _bookAds = [];
+  List<AdModel> _ads = [];
   final ApiService _apiService = ApiService();
 
   @override
   void initState() {
     super.initState();
     _fetchAds();
-    _setupInitialBookAds();
   }
 
   Future<void> _fetchAds() async {
     try {
-      final ApiResponse decodedData = await _apiService.get('/ads');
+      final ApiResponseModel decodedData = await _apiService.get('/ads');
 
-      developer.log('${decodedData.statusCode}');
+      developer.log('${decodedData.body}');
 
       // final List<BookAd> fetchedAds = (decodedData['data'] as List)
       //     .map((data) => BookAd(name: data['name']))
@@ -49,44 +48,6 @@ class _HomePageState extends State<HomePage> {
       //   _isLoading = false;
       // });
     }
-  }
-
-  void _setupInitialBookAds() {
-    setState(() {
-      _bookAds.addAll([
-        const BookAd(name: 'O Senhor dos Anéis'),
-        const BookAd(name: 'Duna'),
-        const BookAd(name: 'Fundação'),
-      ]);
-    });
-  }
-
-  void _addBookAd() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Confirmar Ação'),
-            content: const Text('Você tem certeza que deseja executar esta ação?'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('Cancelar'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-              TextButton(
-                child: const Text('Confirmar'),
-                onPressed: () {
-                  print('Ação confirmada!');
-
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        }
-    );
   }
 
   @override
@@ -165,20 +126,56 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: ListView.builder(
-        itemCount: _bookAds.length,
+        itemCount: _ads.length,
         itemBuilder: (context, index) {
-          final bookAd = _bookAds[index];
+          final ad = _ads[index];
           return ListTile(
-            title: Text(bookAd.name),
+            title: Text(ad.book.title),
             leading: const Icon(Icons.book),
             onTap: () {},
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _addBookAd,
-        tooltip: 'Adicionar Anúncio',
-        child: const Icon(Icons.add),
+      floatingActionButton: PopupMenuButton<String>(
+        tooltip: 'Abrir menu de opções',
+        onSelected: (String result) {
+          switch (result) {
+            case 'opcao1':
+              print('Opção 1 selecionada');
+              break;
+            case 'opcao2':
+              print('Opção 2 selecionada');
+              break;
+          }
+        },
+
+        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+          const PopupMenuItem<String>(
+            value: 'opcao1',
+            child: Row(
+              children: [
+                Icon(Icons.add_comment, color: Colors.black54),
+                SizedBox(width: 8),
+                Text('Adicionar Comentário'),
+              ],
+            ),
+          ),
+          const PopupMenuItem<String>(
+            value: 'opcao2',
+            child: Row(
+              children: [
+                Icon(Icons.camera_alt, color: Colors.black54),
+                SizedBox(width: 8),
+                Text('Tirar Foto'),
+              ],
+            ),
+          ),
+        ],
+
+        child: FloatingActionButton(
+          onPressed: null,
+          child: const Icon(Icons.menu),
+        ),
       ),
     );
   }
